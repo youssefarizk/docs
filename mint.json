@@ -1,29 +1,29 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Documentation | Wondercraft",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/Wondercraft white.png",
+    "light": "/logo/Logo-official.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
+    "primary": "#00CF9E",
     "light": "#07C983",
-    "dark": "#0D9373",
+    "dark": "#000423",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#07F5C0",
+      "to": "#004A30"
     }
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "mailto:support@wondercraft.ai"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "Go to studio",
+    "url": "https://wondercraft.ai/studio"
   },
   "tabs": [
     {
@@ -33,59 +33,37 @@
   ],
   "anchors": [
     {
-      "name": "Documentation",
+      "name": "Help center",
       "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "url": "https://support.wondercraft.ai/"
     },
     {
       "name": "Community",
       "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "url": "https://join.slack.com/t/wondercraft-creatives/shared_invite/zt-2olnne8d3-drRCF_LPGsbmNan6PibNgQ"
     },
     {
       "name": "Blog",
       "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "url": "https://www.wondercraft.ai/blog"
     }
   ],
   "navigation": [
     {
       "group": "Get Started",
-      "pages": [
-        "introduction",
-        "quickstart",
-        "development"
-      ]
-    },
-    {
-      "group": "Essentials",
-      "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
-      ]
+      "pages": ["introduction", "quickstart"]
     },
     {
       "group": "API Documentation",
-      "pages": [
-        "api-reference/introduction"
-      ]
+      "pages": ["api-reference/introduction"]
     },
     {
       "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
+      "pages": ["api-reference/endpoint/get", "api-reference/endpoint/create"]
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "x": "https://x.com/wondercraft_ai",
+    "linkedin": "https://www.linkedin.com/company/wondercraftai"
   }
 }

@@ -1,72 +1,23 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Wondercraft.ai API documentation",
+    "description": "You can find\nout more about Wondercraft.ai\n[here](https://www.wondercraft.ai/).\n",
+    "termsOfService": "https://support.wondercraft.ai/hc/en-gb/articles/14294433754258-Terms-of-Service",
+    "contact": { "email": "team@wondercraft.ai" },
+    "version": "0.1.0"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/v1/podcast": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "Create an episode",
+        "description": "Generate an episode",
+        "operationId": "generate_episode_api_v1_podcast_post",
         "requestBody": {
-          "description": "Plant to add to the store",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/routes__api__podcast__models__GenerateEpisodeRequest"
               }
             }
           },
@@ -74,57 +25,1712 @@
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/GenerateEpisodeResponse"
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/api/v1/podcast/{job_id}": {
+      "get": {
+        "summary": "Get Episode Status",
+        "description": "Get the status of an episode generation",
+        "operationId": "get_episode_status_api_v1_podcast__job_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/GetEpisodeStatusResponse"
                 }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/api/v1/verify": {
+      "get": {
+        "tags": ["Other"],
+        "summary": "Verify API key",
+        "description": "Use this endpoint to verify that your API key is functional",
+        "operationId": "verify_key_api_v1_verify_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/VerifyResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/api/v1/episode": {
+      "post": {
+        "tags": ["Episode"],
+        "summary": "Create a new episode",
+        "description": "For a new episode a podcast must have its podcast defaults set. This can be done on the wondercraft platform by navigating to settings under your podcast.",
+        "operationId": "generate_episode_api_v1_episode_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/routes__api__api__GenerateEpisodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a new podcast episode",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/api/v1/episode/{session_id}": {
+      "get": {
+        "tags": ["Episode"],
+        "summary": "Check status of an episode",
+        "description": "Check the audio generation status for a new episode",
+        "operationId": "check_episode_job_status_api_v1_episode__session_id__get",
+        "security": [{ "APIKeyHeader": [] }],
         "parameters": [
           {
-            "name": "id",
+            "name": "session_id",
             "in": "path",
-            "description": "ID of plant to delete",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EpisodeJobStatusResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/speech": {
+      "post": {
+        "summary": "Start a speech generation job",
+        "operationId": "start_speech_generation_api_v1_speech_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StartSpeechGenRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "type": "string" },
+                  "type": "array",
+                  "title": "Response Start Speech Generation Api V1 Speech Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/api/v1/speech/{job_id}": {
+      "get": {
+        "summary": "Check status of a speech generation job",
+        "operationId": "get_speech_generation_status_api_v1_speech__job_id__get",
+        "security": [{ "APIKeyHeader": [] }],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/voices": {
+      "get": {
+        "summary": "Get Voices Api",
+        "operationId": "get_voices_api_api_v1_voices_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        },
+        "security": [{ "APIKeyHeader": [] }]
+      }
+    },
+    "/comments": {
+      "post": {
+        "summary": "Create Comment",
+        "operationId": "create_comment_comments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCommentRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/comments/{comment_id}": {
+      "delete": {
+        "summary": "Delete Comment",
+        "operationId": "delete_comment_comments__comment_id__delete",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Comment Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Comment",
+        "operationId": "update_comment_comments__comment_id__put",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Comment Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCommentRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/session/{session_id}": {
+      "get": {
+        "summary": "Get Comments For Session",
+        "operationId": "get_comments_for_session_comments_session__session_id__get",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/job/{job_id}": {
+      "get": {
+        "summary": "Get Comments For Job",
+        "operationId": "get_comments_for_job_comments_job__job_id__get",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/published/episodes/{published_id}": {
+      "get": {
+        "summary": "Get Comments Unauthenticated For Session",
+        "operationId": "get_comments_unauthenticated_for_session_comments_published_episodes__published_id__get",
+        "parameters": [
+          {
+            "name": "published_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Published Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workspaces": {
+      "post": {
+        "summary": "Create Workspace",
+        "operationId": "create_workspace_workspaces_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkspaceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/workspaces/{workspace_id}": {
+      "put": {
+        "summary": "Update Workspace",
+        "operationId": "update_workspace_workspaces__workspace_id__put",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Workspace Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkspaceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast-session/timeline/{session_id}/tracks/{track_id}": {
+      "delete": {
+        "summary": "Delete Track",
+        "operationId": "delete_track_podcast_session_timeline__session_id__tracks__track_id__delete",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "track_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Track Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Track",
+        "operationId": "update_track_podcast_session_timeline__session_id__tracks__track_id__put",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "track_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Track Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateTrackBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast-session/timeline/v2/{session_id}/render": {
+      "post": {
+        "summary": "Render Audio For Session By Clips",
+        "operationId": "render_audio_for_session_by_clips_podcast_session_timeline_v2__session_id__render_post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RenderClipsBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast-session/timeline/v3/{session_id}/render": {
+      "post": {
+        "summary": "Render Audio For Session V3",
+        "operationId": "render_audio_for_session_v3_podcast_session_timeline_v3__session_id__render_post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RenderClipsBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast-session/timeline/{session_id}/render/{clip_id}": {
+      "post": {
+        "summary": "Render Audio For Single Clip",
+        "operationId": "render_audio_for_single_clip_podcast_session_timeline__session_id__render__clip_id__post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "clip_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Clip Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Clip" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast-session/timeline/{session_id}/v2/render/{clip_id}": {
+      "post": {
+        "summary": "Render Audio For Single Clip V2",
+        "operationId": "render_audio_for_single_clip_v2_podcast_session_timeline__session_id__v2_render__clip_id__post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "clip_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Clip Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RenderClipsBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast-session/timeline/{session_id}/render": {
+      "post": {
+        "summary": "Render Audio For Session",
+        "operationId": "render_audio_for_session_podcast_session_timeline__session_id__render_post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Render Job Status",
+        "operationId": "get_render_job_status_podcast_session_timeline__session_id__render_get",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voices/pvc": {
+      "post": {
+        "summary": "Request Pvc Voice",
+        "operationId": "request_pvc_voice_voices_pvc_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RequestPVCBody" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/dubbing/session/{session_id}": {
+      "delete": {
+        "summary": "Delete Dubbing Session",
+        "operationId": "delete_dubbing_session_dubbing_session__session_id__delete",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/media/youtube/job/{job_id}": {
+      "get": {
+        "summary": "Get Youtube Media Job Api",
+        "operationId": "get_youtube_media_job_api_media_youtube_job__job_id__get",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/media/youtube/job": {
+      "post": {
+        "summary": "Request Youtube Media Api",
+        "operationId": "request_youtube_media_api_media_youtube_job_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/YouTubeMediaUploadBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/media/youtube/video-info": {
+      "get": {
+        "summary": "Get Youtube Media Info",
+        "operationId": "get_youtube_media_info_media_youtube_video_info_get",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string",
+              "pattern": "(https?://)?(www\\.)?(youtube\\.com|youtu\\.?be)/.+",
+              "title": "Url"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
           },
-          "400": {
-            "description": "unexpected error",
+          "422": {
+            "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
+          }
+        }
+      }
+    },
+    "/podcast_session/timeline/{session_id}/tracks/{track_id}": {
+      "delete": {
+        "summary": "Delete Track",
+        "operationId": "delete_track_podcast_session_timeline__session_id__tracks__track_id__delete",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "track_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Track Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Track",
+        "operationId": "update_track_podcast_session_timeline__session_id__tracks__track_id__put",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "track_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Track Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateTrackBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast_session/timeline/v2/{session_id}/render": {
+      "post": {
+        "summary": "Render Audio For Session By Clips",
+        "operationId": "render_audio_for_session_by_clips_podcast_session_timeline_v2__session_id__render_post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RenderClipsBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast_session/timeline/v3/{session_id}/render": {
+      "post": {
+        "summary": "Render Audio For Session V3",
+        "operationId": "render_audio_for_session_v3_podcast_session_timeline_v3__session_id__render_post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RenderClipsBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast_session/timeline/{session_id}/render/{clip_id}": {
+      "post": {
+        "summary": "Render Audio For Single Clip",
+        "operationId": "render_audio_for_single_clip_podcast_session_timeline__session_id__render__clip_id__post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "clip_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Clip Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Clip" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast_session/timeline/{session_id}/v2/render/{clip_id}": {
+      "post": {
+        "summary": "Render Audio For Single Clip V2",
+        "operationId": "render_audio_for_single_clip_v2_podcast_session_timeline__session_id__v2_render__clip_id__post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "clip_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Clip Id" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RenderClipsBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast_session/timeline/{session_id}/render": {
+      "post": {
+        "summary": "Render Audio For Session",
+        "operationId": "render_audio_for_session_podcast_session_timeline__session_id__render_post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Render Job Status",
+        "operationId": "get_render_job_status_podcast_session_timeline__session_id__render_get",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tell-me": {
+      "post": {
+        "summary": "Post Tell Me Request",
+        "operationId": "post_tell_me_request_tell_me_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TellMeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tell-me/{job_id}": {
+      "get": {
+        "summary": "Get Tell Me Job",
+        "operationId": "get_tell_me_job_tell_me__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tell-me/generate": {
+      "post": {
+        "summary": "Post Generate",
+        "operationId": "post_generate_tell_me_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TellMeRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tell-me/{job_id}/audio.mp3": {
+      "get": {
+        "summary": "Get Job Audio",
+        "operationId": "get_job_audio_tell_me__job_id__audio_mp3_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          },
+          {
+            "name": "range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Range"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/podcast-generation-tool/podcast": {
+      "post": {
+        "summary": "Post Podcast Generation Tool Job",
+        "operationId": "post_podcast_generation_tool_job_podcast_generation_tool_podcast_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostGeneratePodcastToolRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/podcast-generation-tool/script": {
+      "post": {
+        "summary": "Post Script Generation Tool Job",
+        "operationId": "post_script_generation_tool_job_podcast_generation_tool_script_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostGeneratePodcastToolRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/podcast-generation-tool/ad": {
+      "post": {
+        "summary": "Post Ad Generation Tool Job",
+        "operationId": "post_ad_generation_tool_job_podcast_generation_tool_ad_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostGenerateAdToolRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/podcast-generation-tool/meditation": {
+      "post": {
+        "summary": "Post Meditation Generation Tool Job",
+        "operationId": "post_meditation_generation_tool_job_podcast_generation_tool_meditation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostGenerateMeditationToolRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/podcast-generation-tool/jobs/{job_id}": {
+      "get": {
+        "summary": "Get Podcast Generation Tool Job",
+        "operationId": "get_podcast_generation_tool_job_podcast_generation_tool_jobs__job_id__get",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hn/generate": {
+      "post": {
+        "summary": "Post Generate",
+        "operationId": "post_generate_hn_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostGenerateRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hn/{job_id}": {
+      "get": {
+        "summary": "Get Job",
+        "operationId": "get_job_hn__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hn/{job_id}/audio.mp3": {
+      "get": {
+        "summary": "Get Job Audio",
+        "operationId": "get_job_audio_hn__job_id__audio_mp3_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Job Id" }
+          },
+          {
+            "name": "range",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Range"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice-presets": {
+      "post": {
+        "summary": "Create Voice Preset",
+        "operationId": "create_voice_preset_voice_presets_post",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoicePresetCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Voice Preset",
+        "operationId": "get_voice_preset_voice_presets_get",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/voice-presets/{voice_preset_id}": {
+      "delete": {
+        "summary": "Delete Voice Preset",
+        "operationId": "delete_voice_preset_voice_presets__voice_preset_id__delete",
+        "security": [{ "OAuth2PasswordBearer": [] }],
+        "parameters": [
+          {
+            "name": "voice_preset_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Voice Preset Id" }
+          },
+          {
+            "name": "workspace_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Workspace Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project-templates": {
+      "get": {
+        "summary": "Get Project Templates",
+        "operationId": "get_project_templates_project_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        },
+        "security": [{ "OAuth2PasswordBearer": [] }]
+      }
+    },
+    "/test-redis-setup": {
+      "get": {
+        "summary": "Get Test Redis Setup",
+        "operationId": "get_test_redis_setup_test_redis_setup_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
           }
         }
       }
@@ -132,63 +1738,734 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
+      "Clip": {
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "id": { "type": "string", "title": "Id" },
+          "track_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Track Id"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "clip_type": { "$ref": "#/components/schemas/ClipType" },
+          "song_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Song Id"
+          },
+          "media_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Media Id"
+          },
+          "speech_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Speech Id"
+          },
+          "sound_effect_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Sound Effect Id"
+          },
+          "text": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Text"
+          },
+          "sts_media_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Sts Media Id"
+          },
+          "base_voice_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Base Voice Id"
+          },
+          "voice_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Id"
+          },
+          "voice_settings": {
+            "anyOf": [{ "type": "object" }, { "type": "null" }],
+            "title": "Voice Settings"
+          },
+          "voice_tone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Tone"
+          },
+          "voice_accent": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Accent"
+          },
+          "language": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Language"
+          },
+          "timeline_start_at_ms": {
+            "type": "integer",
+            "title": "Timeline Start At Ms"
+          },
+          "playback_start_at_ms": {
+            "type": "integer",
+            "title": "Playback Start At Ms"
+          },
+          "playback_length_ms": {
+            "type": "integer",
+            "title": "Playback Length Ms"
+          },
+          "playback_speed": {
+            "type": "number",
+            "title": "Playback Speed",
+            "default": 1
+          },
+          "original_media_duration_ms": {
+            "type": "integer",
+            "title": "Original Media Duration Ms"
+          },
+          "volume": { "type": "number", "title": "Volume" },
+          "fade_timestamps_ms": {
+            "anyOf": [
+              { "items": { "type": "integer" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Fade Timestamps Ms"
+          },
+          "fade_volumes": {
+            "anyOf": [
+              { "items": { "type": "number" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Fade Volumes"
           }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "clip_type",
+          "timeline_start_at_ms",
+          "playback_start_at_ms",
+          "playback_length_ms",
+          "original_media_duration_ms",
+          "volume"
+        ],
+        "title": "Clip"
+      },
+      "ClipType": {
+        "type": "integer",
+        "enum": [1, 2, 3, 4],
+        "title": "ClipType"
+      },
+      "CreateCommentRequest": {
+        "properties": {
+          "comment_text": { "type": "string", "title": "Comment Text" },
+          "words": {
+            "anyOf": [
+              { "items": { "type": "object" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Words"
+          },
+          "audio_job_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Audio Job Id"
+          },
+          "session_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Session Id"
+          },
+          "segment_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Segment Id"
+          },
+          "clip_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Clip Id"
+          },
+          "parent_comment_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Parent Comment Id"
+          },
+          "selected_text": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Selected Text"
+          },
+          "index": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Index",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": ["comment_text"],
+        "title": "CreateCommentRequest"
+      },
+      "CreateWorkspaceRequest": {
+        "properties": {
+          "name": { "type": "string", "title": "Name" },
+          "invitees": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/WorkspaceInvite" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Invitees"
+          }
+        },
+        "type": "object",
+        "required": ["name"],
+        "title": "CreateWorkspaceRequest"
+      },
+      "EpisodeJobStatusResponse": {
+        "properties": {
+          "finished": { "type": "boolean", "title": "Finished" },
+          "url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Url"
+          },
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": ["finished"],
+        "title": "EpisodeJobStatusResponse",
+        "example": {
+          "error": false,
+          "finished": true,
+          "url": "https://s3.example.com/episode.mp3"
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "GenerateEpisodeResponse": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id",
+            "description": "The job ID for the episode generation"
+          }
+        },
+        "type": "object",
+        "required": ["job_id"],
+        "title": "GenerateEpisodeResponse"
+      },
+      "GetEpisodeStatusResponse": {
+        "properties": {
+          "finished": {
+            "type": "boolean",
+            "title": "Finished",
+            "description": "Whether the episode generation is finished"
           },
-          {
-            "required": [
-              "id"
+          "script": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Script",
+            "description": "The script for the episode"
+          },
+          "url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Url",
+            "description": "The URL for the episode"
+          },
+          "error": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Error",
+            "description": "The error for the episode generation if there was one"
+          }
+        },
+        "type": "object",
+        "required": ["finished"],
+        "title": "GetEpisodeStatusResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ModelSettings": {
+        "properties": {
+          "engine": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Engine",
+            "default": "elevenlabs"
+          },
+          "similarity_boost": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Similarity Boost",
+            "default": 0.75
+          },
+          "stability": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Stability",
+            "default": 0.6
+          },
+          "style": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Style",
+            "default": 0
+          },
+          "use_speaker_boost": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Use Speaker Boost",
+            "default": true
+          },
+          "model": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Model"
+          }
+        },
+        "type": "object",
+        "title": "ModelSettings"
+      },
+      "PostGenerateAdToolRequest": {
+        "properties": {
+          "duration": { "type": "string", "title": "Duration" },
+          "style": { "type": "string", "title": "Style" },
+          "language": { "$ref": "#/components/schemas/SupportedLanguageEnum" },
+          "email": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Email"
+          },
+          "host": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Host"
+          },
+          "link": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Link"
+          }
+        },
+        "type": "object",
+        "required": ["duration", "style", "language"],
+        "title": "PostGenerateAdToolRequest"
+      },
+      "PostGenerateMeditationToolRequest": {
+        "properties": {
+          "topic": { "type": "string", "title": "Topic" },
+          "style": { "type": "string", "title": "Style" },
+          "language": { "$ref": "#/components/schemas/SupportedLanguageEnum" },
+          "duration": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Duration"
+          },
+          "host": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Host"
+          }
+        },
+        "type": "object",
+        "required": ["topic", "style", "language", "duration"],
+        "title": "PostGenerateMeditationToolRequest"
+      },
+      "PostGeneratePodcastToolRequest": {
+        "properties": {
+          "topic": { "type": "string", "title": "Topic" },
+          "style": { "type": "string", "title": "Style" },
+          "language": { "$ref": "#/components/schemas/SupportedLanguageEnum" },
+          "email": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Email"
+          },
+          "host": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Host"
+          }
+        },
+        "type": "object",
+        "required": ["topic", "style", "language"],
+        "title": "PostGeneratePodcastToolRequest"
+      },
+      "PostGenerateRequest": {
+        "properties": {
+          "lookback": { "type": "string", "title": "Lookback" },
+          "prompt": { "type": "string", "title": "Prompt" }
+        },
+        "type": "object",
+        "required": ["lookback", "prompt"],
+        "title": "PostGenerateRequest"
+      },
+      "RenderClipsBody": {
+        "properties": {
+          "clips": {
+            "items": { "$ref": "#/components/schemas/Clip" },
+            "type": "array",
+            "title": "Clips"
+          },
+          "format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["mp3-96k", "mp3-128k", "mp3-192k", "wav-705k"]
+              },
+              { "type": "null" }
             ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
+            "title": "Format",
+            "default": "mp3-128k"
+          }
+        },
+        "type": "object",
+        "required": ["clips"],
+        "title": "RenderClipsBody"
+      },
+      "RequestPVCBody": {
+        "properties": { "link": { "type": "string", "title": "Link" } },
+        "type": "object",
+        "required": ["link"],
+        "title": "RequestPVCBody"
+      },
+      "Script": {
+        "properties": {
+          "intro": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Intro"
+          },
+          "segments": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Segments"
+          },
+          "outro": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Outro"
+          }
+        },
+        "type": "object",
+        "required": ["segments"],
+        "title": "Script"
+      },
+      "SpeechToSpeechGenerationSpec": {
+        "properties": {
+          "voice_id": { "type": "string", "title": "Voice Id" },
+          "voice_tone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Tone"
+          },
+          "voice_accent": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Accent"
+          },
+          "sts_media_id": { "type": "string", "title": "Sts Media Id" },
+          "language": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Language",
+            "default": "en"
+          },
+          "voice_settings": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ModelSettings" },
+              { "type": "null" }
+            ],
+            "default": {
+              "engine": "elevenlabs",
+              "similarity_boost": 0.75,
+              "stability": 0.6,
+              "style": 0.0,
+              "use_speaker_boost": true
             }
           }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+        },
         "type": "object",
+        "required": ["voice_id", "sts_media_id"],
+        "title": "SpeechToSpeechGenerationSpec"
+      },
+      "StartSpeechGenObject": {
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
+          "clip_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Clip Id"
           },
-          "message": {
-            "type": "string"
+          "inputs": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/TextToSpeechGenerationSpec" },
+              { "$ref": "#/components/schemas/SpeechToSpeechGenerationSpec" }
+            ],
+            "title": "Inputs"
+          },
+          "input_hash": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Input Hash"
           }
-        }
+        },
+        "type": "object",
+        "required": ["inputs"],
+        "title": "StartSpeechGenObject"
+      },
+      "StartSpeechGenRequest": {
+        "properties": {
+          "inputs": {
+            "items": { "$ref": "#/components/schemas/StartSpeechGenObject" },
+            "type": "array",
+            "title": "Inputs"
+          }
+        },
+        "type": "object",
+        "required": ["inputs"],
+        "title": "StartSpeechGenRequest"
+      },
+      "SupportedLanguageEnum": {
+        "type": "string",
+        "enum": [
+          "en",
+          "es",
+          "pt",
+          "hi",
+          "fr",
+          "de",
+          "it",
+          "pl",
+          "ja",
+          "zh",
+          "ko",
+          "id",
+          "nl",
+          "tr",
+          "sv",
+          "bg",
+          "ro",
+          "ar",
+          "el",
+          "da",
+          "ta",
+          "uk"
+        ],
+        "title": "SupportedLanguageEnum"
+      },
+      "TellMeRequest": {
+        "properties": {
+          "query": { "type": "string", "title": "Query" },
+          "detailed": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Detailed"
+          }
+        },
+        "type": "object",
+        "required": ["query"],
+        "title": "TellMeRequest"
+      },
+      "TextToSpeechGenerationSpec": {
+        "properties": {
+          "voice_id": { "type": "string", "title": "Voice Id" },
+          "base_voice_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Base Voice Id"
+          },
+          "voice_tone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Tone"
+          },
+          "voice_accent": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Accent"
+          },
+          "voice_prompt": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Voice Prompt"
+          },
+          "segment_text": { "type": "string", "title": "Segment Text" },
+          "language": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Language",
+            "default": "en"
+          },
+          "voice_settings": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ModelSettings" },
+              { "type": "null" }
+            ],
+            "default": {
+              "engine": "elevenlabs",
+              "similarity_boost": 0.75,
+              "stability": 0.6,
+              "style": 0.0,
+              "use_speaker_boost": true
+            }
+          }
+        },
+        "type": "object",
+        "required": ["voice_id", "segment_text"],
+        "title": "TextToSpeechGenerationSpec"
+      },
+      "UpdateCommentRequest": {
+        "properties": {
+          "resolved": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Resolved"
+          },
+          "comment_text": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Comment Text"
+          }
+        },
+        "type": "object",
+        "title": "UpdateCommentRequest"
+      },
+      "UpdateTrackBody": {
+        "properties": {
+          "fractional_index": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Fractional Index"
+          },
+          "volume": {
+            "anyOf": [{ "type": "number" }, { "type": "null" }],
+            "title": "Volume"
+          }
+        },
+        "type": "object",
+        "title": "UpdateTrackBody"
+      },
+      "UpdateWorkspaceRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "title": "UpdateWorkspaceRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      },
+      "VerifyResponse": {
+        "properties": {
+          "status": { "type": "string", "title": "Status" },
+          "email": { "type": "string", "title": "Email" }
+        },
+        "type": "object",
+        "required": ["status", "email"],
+        "title": "VerifyResponse",
+        "example": { "email": "example@example.com", "status": "ok" }
+      },
+      "VoicePresetCreateRequest": {
+        "properties": {
+          "voice_id": { "type": "string", "title": "Voice Id" },
+          "base_voice_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Base Voice Id"
+          },
+          "accent": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Accent"
+          },
+          "tone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Tone"
+          },
+          "preview_speech_job_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Preview Speech Job Id"
+          }
+        },
+        "type": "object",
+        "required": ["voice_id"],
+        "title": "VoicePresetCreateRequest"
+      },
+      "WorkspaceInvite": {
+        "properties": {
+          "email": { "type": "string", "title": "Email" },
+          "role": { "$ref": "#/components/schemas/WorkspaceRole" }
+        },
+        "type": "object",
+        "required": ["email", "role"],
+        "title": "WorkspaceInvite"
+      },
+      "WorkspaceRole": {
+        "type": "integer",
+        "enum": [1, 2],
+        "title": "WorkspaceRole"
+      },
+      "YouTubeMediaUploadBody": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Url"
+          },
+          "start": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Start"
+          },
+          "end": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "End"
+          }
+        },
+        "type": "object",
+        "required": ["url"],
+        "title": "YouTubeMediaUploadBody"
+      },
+      "routes__api__api__GenerateEpisodeRequest": {
+        "properties": {
+          "podcast_id": { "type": "string", "title": "Podcast Id" },
+          "content": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Content"
+          },
+          "script": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Script" },
+              { "type": "null" }
+            ]
+          },
+          "content_length": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Content Length",
+            "default": 1
+          },
+          "tone": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Tone",
+            "default": "conversational"
+          },
+          "publish_episode": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Publish Episode",
+            "default": false
+          },
+          "generate_audio": {
+            "type": "boolean",
+            "title": "Generate Audio",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["podcast_id"],
+        "title": "GenerateEpisodeRequest",
+        "example": { "episode_id": "c29ee674-cb13-4684-ba52-cf48dfbfaaa0" }
+      },
+      "routes__api__podcast__models__GenerateEpisodeRequest": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "description": "The prompt for the episode, can include links"
+          }
+        },
+        "type": "object",
+        "required": ["prompt"],
+        "title": "GenerateEpisodeRequest"
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      "APIKeyHeader": { "type": "apiKey", "in": "header", "name": "X-API-KEY" },
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": { "password": { "scopes": {}, "tokenUrl": "token" } }
       }
     }
   }
