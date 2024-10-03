@@ -90,7 +90,7 @@ while True:
     status = check_episode_status(job_id)
     if status and status['finished']:
         print("Episode creation completed!")
-        print(f"Download URL: {status['download_url']}")
+        print(f"Download URL: {status['url']}")
         break
     elif status and not status['error']:
         print("Episode creation failed.")
