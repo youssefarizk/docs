@@ -105,3 +105,5 @@ This script will check the status every 10 seconds until the episode is either c
 ## Error Handling
 
 Both endpoints may return a 422 status code for validation errors. Make sure to handle these errors appropriately in your production code.
+
+Additionally, please note that there is currently a limit of 5 concurrent jobs. If you exceed this limit, you will receive a 429 status code.
