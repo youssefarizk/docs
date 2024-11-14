@@ -387,8 +387,10 @@
       }
     }
   },
-  "servers": {
-    "url": "https://api.wondercraft.ai",
-    "description": "Base Wondercraft API"
-  }
+  "servers": [
+    {
+      "url": "https://api.wondercraft.ai",
+      "description": "Base Wondercraft API"
+    }
+  ]
 }
