@@ -31,7 +31,7 @@ Wondercraft AI will start a job that will generate a script for your podcast bas
 import requests
 import json
 
-API_BASE_URL = 'https://api.wondercraft.ai'
+API_BASE_URL = 'https://api.wondercraft.ai/v1'
 API_KEY = 'YOUR_API_KEY'
 
 headers = {
@@ -45,7 +45,7 @@ episode_data = {
 }
 
 # Make the POST request to create the episode
-response = requests.post(f"{API_BASE_URL}/v1/podcast",
+response = requests.post(f"{API_BASE_URL}/podcast",
                          headers=headers,
                          data=json.dumps(episode_data))
 
@@ -66,7 +66,7 @@ Once you've started the episode creation process, you can check its status using
 import requests
 import time
 
-API_BASE_URL = 'https://api.wondercraft.ai'
+API_BASE_URL = 'https://api.wondercraft.ai/v1'
 API_KEY = 'YOUR_API_KEY'
 
 headers = {
@@ -74,7 +74,7 @@ headers = {
 }
 
 def check_episode_status(job_id):
-    response = requests.get(f"{API_BASE_URL}/v1/podcast/{job_id}", headers=headers)
+    response = requests.get(f"{API_BASE_URL}/podcast/{job_id}", headers=headers)
 
     if response.status_code == 200:
         status = response.json()
@@ -123,6 +123,7 @@ looks slightly different. You will provide script segemnts, where each segment c
 speaker.
 
 ```python
+API_BASE_URL = 'https://api.wondercraft.ai/v1'
 headers = {
     'x-api-key': API_KEY
 }
@@ -140,7 +141,7 @@ script_payload = {
     ]
 }
 
-response = requests.post(BASE_URL + "/scripted", json=script_payload, headers=headers)
+response = requests.post(API_BASE_URL + "/podcast/scripted", json=script_payload, headers=headers)
 ```
 
 Voice IDs can be copied from the Wondercraft platform:
