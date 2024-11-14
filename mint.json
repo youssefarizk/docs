@@ -59,7 +59,11 @@
     },
     {
       "group": "Endpoint Examples",
-      "pages": ["api-reference/endpoint/get", "api-reference/endpoint/create"]
+      "pages": [
+        "api-reference/endpoint/generate_podcast", 
+        "api-reference/endpoint/user_scripted",
+        "api-reference/endpoint/get_job_status"
+      ]
     }
   ],
   "footerSocials": {
