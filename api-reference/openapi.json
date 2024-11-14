@@ -4,19 +4,15 @@
     "title": "Wondercraft Public API",
     "version": "0.0.1"
   },
-  "servers": {
-    "url": "https://api.wondercraft.ai/api/v1",
-    "description": "Base Wondercraft API"
-  },
   "paths": {
-    "/api/v1/podcast/user-scripted": {
+    "/api/v1/podcast/scripted": {
       "post": {
         "tags": [
           "Podcasts"
         ],
         "summary": "Create a new episode from the user provided script segments",
         "description": "Starts a background job to produce an audio file with the provided script segments. The response\n    contains a `job_id` that can be used to query with the `/api/v1/podcast/{job_id}` to query for status.\n    Requires a valid `X-API-TOKEN` header.\n\n    - Throws 429 if the user has too many jobs in flight.\n    - Throws 422 if provided voice_ids are not unique\n    - Throws 400 if any voice_ids provided are invalid",
-        "operationId": "generate_scripted_episode_podcast_user_scripted_post",
+        "operationId": "generate_scripted_episode_podcast_scripted_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -390,5 +386,9 @@
         "name": "X-API-KEY"
       }
     }
+  },
+  "servers": {
+    "url": "https://api.wondercraft.ai",
+    "description": "Base Wondercraft API"
   }
 }

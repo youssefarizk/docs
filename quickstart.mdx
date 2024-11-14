@@ -25,6 +25,7 @@ The API key should be passed in the header of your requests as `X-API-KEY`.
 ## Creating a Podcast Episode
 
 To create a new podcast episode, you'll use the `/v1/podcast` endpoint with a POST request.
+Wondercraft AI will start a job that will generate a script for your podcast based on the provided prompt.
 
 ```python
 import requests
@@ -92,7 +93,7 @@ while True:
         print("Episode creation completed!")
         print(f"Download URL: {status['url']}")
         break
-    elif status and not status['error']:
+    elif status and status['error'] == False:
         print("Episode creation failed.")
         break
     else:
@@ -107,3 +108,43 @@ This script will check the status every 10 seconds until the episode is either c
 Both endpoints may return a 422 status code for validation errors. Make sure to handle these errors appropriately in your production code.
 
 Additionally, please note that there is currently a limit of 5 concurrent jobs. If you exceed this limit, you will receive a 429 status code.
+
+## Advanced Customization
+
+<Warning>
+  This API is under rapid development. We are working hard to improve existing
+  functionality and add missing functionality and as such might need to drop
+  support for existing workflows. If you have any feature requests or concerns,
+  please contact support@wondercraft.ai
+</Warning>
+
+If you would prefer to provide your own script, you can use the `/scripted` endpoint instead. The payload for that request
+looks slightly different. You will provide script segemnts, where each segment contains the text and the voice id for the
+speaker.
+
+```python
+headers = {
+    'x-api-key': API_KEY
+}
+
+voice_id_1 = "<voice_id_1>"
+voice_id_2 = "<voice_id_2>"
+
+script_payload = {
+    "script": [
+        {"text": "This is the first speaker", "voice_id": voice_id_1},
+        {"text": "And this the second speaker", "voice_id": voice_id_2},
+        {"text": "This is the first speaker again again", "voice_id": voice_id_1},
+        {"text": "The first speaker likes to talk alot", "voice_id": voice_id_2},
+        {"text": "ha ha ha... ok I do", "voice_id": voice_id_1},
+    ]
+}
+
+response = requests.post(BASE_URL + "/scripted", json=script_payload, headers=headers)
+```
+
+Voice IDs can be copied from the Wondercraft platform:
+
+<Frame>
+  <img src="/images/copy_voice_id.png" style={{ borderRadius: "0.5rem" }} />
+</Frame>
