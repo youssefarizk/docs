@@ -193,6 +193,7 @@
             "description": "A list of voice_ids to use for the generated audio. If the script has multiple speakers, we will use the voices from this list in the order then appear in. All ids in this list must be unique. If no IDs are provided, up to 2 defaults will be used."
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "prompt"
@@ -209,6 +210,7 @@
             "description": "The job ID for the episode generation."
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "job_id"
@@ -226,6 +228,7 @@
             "description": "The segments forming the script for the episode"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "script"
@@ -277,6 +280,7 @@
             "description": "Whether an error occurred while generating the episode"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "finished"
@@ -309,6 +313,7 @@
             "description": "A unique identifier for the voice copied from the Wondercraft Platform to use for the speaker of this segment."
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "text",
@@ -367,6 +372,7 @@
             "description": "The email address of the user this token is associated with"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "status",
