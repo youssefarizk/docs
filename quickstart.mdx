@@ -24,7 +24,7 @@ The API key should be passed in the header of your requests as `X-API-KEY`.
 
 ## Creating a Podcast Episode
 
-To create a new podcast episode, you'll use the `/v1/podcast` endpoint with a POST request.
+To create a new podcast episode, you'll use the `/podcast` endpoint with a POST request.
 Wondercraft AI will start a job that will generate a script for your podcast based on the provided prompt.
 
 ```python
@@ -60,7 +60,7 @@ else:
 
 ## Checking Episode Status
 
-Once you've started the episode creation process, you can check its status using the `/v1/podcast/{job_id}` endpoint with a GET request.
+Once you've started the episode creation process, you can check its status using the `/podcast/{job_id}` endpoint with a GET request.
 
 ```python
 import requests
