@@ -11,7 +11,7 @@
           "Podcasts"
         ],
         "summary": "Create a new episode from the user provided script segments",
-        "description": "Starts a background job to produce an audio file with the provided script segments. The response\n    contains a `job_id` that can be used to query with the `/podcast/{job_id}` to query for status.\n    Requires a valid `X-API-TOKEN` header.\n\n    - Throws 429 if the user has too many jobs in flight.\n    - Throws 422 if provided voice_ids are not unique\n    - Throws 400 if any voice_ids provided are invalid",
+        "description": "Starts a background job to produce an audio file with the provided script segments. The response\n    contains a `job_id` that can be used to query with the `/podcast/{job_id}` to query for status.\n    Requires a valid `X-API-TOKEN` header.\n\n    - Throws 429 if the user has too many jobs in flight.\n    - Throws 400 if any voice_id provided is invalid",
         "operationId": "generate_scripted_episode_podcast_scripted_post",
         "requestBody": {
           "content": {
@@ -58,7 +58,7 @@
           "Podcasts"
         ],
         "summary": "Create a new AI scripted episode from a prompt",
-        "description": "Creates an AI generated script from the provided prompt and starts a background job to produce\n    an audio file. The response contains a `job_id` that can be used sed to query with the `/podcast/{job_id}`\n    to query for status.\n    Requires a valid `X-API-TOKEN` header.\n\n    - Throws 429 if the user has too many jobs in flight.\n    - Throws 422 if provided voice_ids are not unique\n    - Throws 400 if any voice_ids provided are invalid",
+        "description": "Creates an AI generated script from the provided prompt and starts a background job to produce\n    an audio file. The response contains a `job_id` that can be used to query with the `/podcast/{job_id}`\n    to query for status.\n    Requires a valid `X-API-TOKEN` header.\n\n    - Throws 429 if the user has too many jobs in flight.\n    - Throws 422 if provided voice_ids are not unique\n    - Throws 400 if any voice_ids provided are invalid",
         "operationId": "generate_episode_podcast_post",
         "requestBody": {
           "content": {
@@ -105,7 +105,7 @@
           "Podcasts"
         ],
         "summary": "Get Episode Status",
-        "description": "Get the status of podcast generation job. Requires a valid `X-API-TOKEN` header.\n    - Throws 404 if job_id is invalid",
+        "description": "Get the status of podcast generation job, including a link to download it if the job was successful.\n    Requires a valid `X-API-TOKEN` header.\n    - Throws 404 if job_id is invalid",
         "operationId": "get_episode_status_podcast__job_id__get",
         "security": [
           {
