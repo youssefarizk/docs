@@ -103,6 +103,10 @@ while True:
 
 This script will check the status every 10 seconds until the episode is either completed or fails.
 
+If the job completed successfully, the response will include a URL to download the generated mp3 file.
+
+Check [API Docs](/api-reference/endpoint/get_job_status) for more details on the shape of the response.
+
 ## Error Handling
 
 Both endpoints may return a 422 status code for validation errors. Make sure to handle these errors appropriately in your production code.
