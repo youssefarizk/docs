@@ -207,7 +207,7 @@
             "type": "string",
             "format": "uuid",
             "title": "Job Id",
-            "description": "The job ID for the episode generation."
+            "description": "The job ID for the episode generation. The status of this job can be queried using the`/podcast/{job_id}` endpoint."
           }
         },
         "additionalProperties": false,
