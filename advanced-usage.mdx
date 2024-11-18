@@ -67,7 +67,8 @@ Here’s an example of how to use the music_spec field:
     "fade_in_ms": 3000,
     "fade_out_ms": 2000,
     "playback_start": 5000,
-    "playback_end": 30000
+    "playback_end": 30000,
+    "volume": 0.05
   }
 }
 ```
@@ -93,7 +94,11 @@ Here’s an example of how to use the music_spec field:
 5. `playback_end` (Optional)
    - Description: The point (in milliseconds) at which the music track stops playing. This trims the end of the music track.
    - Default: Plays until the end of the music track or the length of the generated episode (whichever comes first).
-   - Example: "playback_end": 30000 stops playback 30 seconds into the music track.
+   - Example: `"playback_end": 30000` stops playback 30 seconds into the music track.
+6. `volume` (Optional)
+   - Description: The music playback volume. Must be between 0.0 and 1.0
+   - Default: 0.05 (or 5%) - For most music tracks, this should be high enough.
+   - Example: `"volume": 0.01` - makes the volume of the music 1%
 
 ### Additional Notes
 
@@ -116,7 +121,8 @@ Example Full Request
     "fade_in_ms": 3000,
     "fade_out_ms": 2000,
     "playback_start": 0,
-    "playback_end": 10000
+    "playback_end": 10000,
+    "volume": 0.01
   }
 }
 ```
@@ -126,3 +132,4 @@ This request:
 - Adds background music with ID "c6a490a3-f404-4525-955b-e0baddeafb99".
 - Fades in over 3 seconds, starts playback at the beginning of the track, and fades out over 2 seconds.
 - Stops playback 10 seconds into the music or at the end of the podcast, whichever comes first.
+- Sets the music volume to 1%
