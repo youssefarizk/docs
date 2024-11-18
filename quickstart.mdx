@@ -8,8 +8,9 @@ For any details about the API, please refer to the [API Reference](/api-referenc
 
 ## Prerequisites
 
-- Python 3.6+
-- `requests` library (`pip install requests`)
+* Python 3.6+
+
+* `requests` library (`pip install requests`)
 
 ## Authentication
 
@@ -93,7 +94,7 @@ while True:
         print("Episode creation completed!")
         print(f"Download URL: {status['url']}")
         break
-    elif status and status['error'] == False:
+    elif status and status['error'] == True:
         print("Episode creation failed.")
         break
     else:
